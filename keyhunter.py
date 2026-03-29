@@ -39,6 +39,25 @@ def check_inventory():
             print(f"\033[96m{item}\033[0m: {quantity}")
     print()
 
+def reset_inventory():
+    """Resets the inventory to its starting state."""
+    global inv
+    inv = {
+        "skeleton key(town)": 0,
+        "skeleton key(mine)": 0,
+        "skeleton key(lake)": 0,
+        "skeleton key(forest)": 0,
+        "lives": 3,
+        "diving gear": 0,
+        "ornate key": 0,
+        "cabin key": 0,
+        "matches": 0,
+        "pickaxe": 0,
+        "machete": 0,
+        "crowbar": 0,
+        "grave clue": 0,
+    }
+
 def update_inventory(item, quantity=1):
     """Updates the inventory with the specified quantity of an item."""
     if item in inv:
@@ -107,6 +126,7 @@ def menu():
     border()
     sg = get_valid_input("Input [1] Start / [2] How-to / [3] Credits / [4] Winners:\n", [1, 2, 3, 4])
     if sg == 1:
+        reset_inventory()
         name = input("Please enter your name:\n")
         print(f"\nWelcome, {name}\n")
         intro()
@@ -125,7 +145,7 @@ def navigate(prompt, options):
 def howto():
     """Displays a basic guide to the game."""
     print("\n" + "-" * 66)
-    print("| X is a text-based adventure game.                         |")
+    print("| Keyhunter is a text-based adventure game.                 |")
     print("| Use keys when shown in-game to control your character.    |")
     print("| Example: Type 1 and hit enter to move your character.     |")
     print("| Find key parts in each area to win the game.              |")
@@ -283,8 +303,10 @@ def church():
             border()
             inv["lives"] -= 1
             deathintro()
+            return
         else:
             leavingchurch()
+            return
     leavingchurch()
 
 def leavingchurch():
@@ -389,7 +411,7 @@ def manor():
     navigate(
         "[1] Try the door / [2] Check out the shed / [3] Go back:\n",
         {
-            1: lambda: print("You successfully open the door with the crowbar.") or manorkitchen() if inv["crowbar"] == 1 else shed(),
+            1: lambda: (print("You lever the door open with the crowbar.") or manorkitchen()) if inv["crowbar"] == 1 else (print("The door is jammed tight. You'll need something to pry it open.") or shed()),
             2: shed,
             3: forest,
         }
@@ -405,7 +427,7 @@ def manorbk():
     navigate(
         "[1] Go into the manor / [2] Check out the shed / [3] Head back to the clearing:\n",
         {
-            1: manorkitchenbk if inv["matches"] == 1 else lambda: print("You successfully open the door with the crowbar.") or manorkitchen(),
+            1: manorkitchen,
             2: shed,
             3: forestbk,
         }
@@ -445,10 +467,41 @@ def manorkitchen():
     navigate(
         "Do you [1] go into the hallway / [2] the living room / [3] leave the manor?\n",
         {
-            1: lambda: print("You plummet into the abyss.") or lose_life() or deathintro(),
+            1: hallway_fall,
             2: livingroom,
             3: manorbk,
         }
+    )
+
+def hallway_fall():
+    """Handles falling into the collapsed hallway."""
+    print("\nYou step into the hallway. The floorboards give way and you plummet into the darkness below.")
+    border()
+    inv["lives"] -= 1
+    deathintro()
+
+def livingroom():
+    """Handles the manor living room — source of the grave clue and machete."""
+    print()
+    time.sleep(1)
+    border()
+    print("\nThe living room is thick with dust. Old furniture sits under white sheets.")
+    print("Hunting trophies line the walls and a cold fireplace dominates the far end of the room.")
+    if inv["machete"] == 0:
+        print("\nA large machete hangs above the fireplace, surprisingly well-maintained.")
+        update_inventory("machete")
+        print("You take it. Could come in handy.")
+    if inv["grave clue"] == 0:
+        print("\nAn old journal sits open on the coffee table. One entry catches your eye:")
+        time.sleep(1)
+        print('\n  "...buried the old key with D.R. in the forest graveyard. God rest him."\n')
+        time.sleep(1)
+        update_inventory("grave clue")
+        print("You pocket the journal.")
+    border()
+    navigate(
+        "Do you [1] head back to the kitchen / [2] leave the manor?\n",
+        {1: manorkitchen, 2: manorbk}
     )
 
 def graveyard():
@@ -489,7 +542,7 @@ def graveyard():
         print("You reach down and grab the bag. Looking inside, you find part of a skeleton key!")
         time.sleep(1)
         inv["skeleton key(forest)"] += 1
-        checkinv()
+        check_inventory()
         print("\nThis place is giving you the creeps. You leave.")
         forestbk()
     else:
@@ -596,7 +649,7 @@ def mine_intro():
 def leave_mine():
     """Handles leaving the mine and returning to the crossroads."""
     print("You leave the mine and return to the crossroads. Perhaps you need to locate a necessary item to proceed.")
-    navigate()
+    backintro()
 
 def mine_continue():
     """Handles the decision to continue in the mine or leave."""
@@ -679,7 +732,7 @@ def mine_routes():
             print("You find a skeleton holding a chest containing diving gear and a pickaxe!")
             inv["pickaxe"] += 1
             inv["diving gear"] += 1
-            checkinv()
+            check_inventory()
             print("\nYou quickly run to the next tunnel, which leads to an elevator.")
             elevator_game()
         elif mroutes == 3:
@@ -687,7 +740,7 @@ def mine_routes():
             print("You find a skeleton holding diving gear and a pickaxe.")
             inv["pickaxe"] += 1
             inv["diving gear"] += 1
-            checkinv()
+            check_inventory()
             print("\nA giant spider appears! You escape to a nearby tunnel leading to an elevator.")
             elevator_game()
     except ValueError:
