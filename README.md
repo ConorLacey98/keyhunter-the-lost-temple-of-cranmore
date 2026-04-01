@@ -1,9 +1,34 @@
 # keyhunter-the-lost-temple-of-cranmore
-A Python console game. Originally written in Python 2 and now refactored and improved in Python 3. The game features a console based story with various paths. The goal is to survive and collect all 4 skeleton keys.
+A Python text adventure game. Originally written in Python 2 and refactored to Python 3. Features a Textual TUI with persistent inventory, scrollable narrative, and a live status bar. The goal is to survive and collect all 4 skeleton keys.
+
+## Requirements
+
+- Python 3.10+
+- [Textual](https://github.com/Textualize/textual) — installed in the project venv
+
+## Setup
+
+```bash
+# Create and activate the virtual environment (first time only)
+python -m venv keyhunter
+keyhunter\Scripts\activate
+
+# Install dependencies
+pip install textual
+```
 
 ## How to run
 
+**Must be run in an external terminal** (Windows Terminal or PowerShell). Textual does not render inside VS Code's integrated terminal.
+
+```bash
+# From the project directory
+.\keyhunter\Scripts\python keyhunter.py
 ```
+
+Or with the venv activated:
+
+```bash
 python keyhunter.py
 ```
 
