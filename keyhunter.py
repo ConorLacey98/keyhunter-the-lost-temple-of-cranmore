@@ -329,16 +329,18 @@ class KeyhunterApp(App):
 
     async def _screen_win(self) -> bool:
         self.set_location("── YOU WIN! ──────────────────────────────────────")
-        self.write("[bold yellow]")
-        self.write("     .--------.     ")
-        self.write("   .'          '.   ")
-        self.write("  /   O      O   \\  ")
-        self.write(" :                : ")
-        self.write(" |                | ")
-        self.write(" : ',          ,' : ")
-        self.write("  \\  '-......-'  /  ")
-        self.write("   '.          .'   ")
-        self.write("     '-......-'     [/bold yellow]")
+        for line in [
+            "     .--------.     ",
+            "   .'          '.   ",
+            "  /   O      O   \\  ",
+            " :                : ",
+            " |                | ",
+            " : ',          ,' : ",
+            "  \\  '-......-'  /  ",
+            "   '.          .'   ",
+            "     '-......-'     ",
+        ]:
+            self.write(f"[bold yellow]{line}[/bold yellow]")
         self.write("")
         name = await self.get_text("Enter your name for the winners list:")
         with open("winners.txt", "a", encoding="utf-8") as f:
@@ -349,16 +351,18 @@ class KeyhunterApp(App):
 
     async def _screen_lose(self) -> bool:
         self.set_location("── YOU LOSE ──────────────────────────────────────")
-        self.write("[bold yellow]")
-        self.write("     .--------.     ")
-        self.write("   .'          '.   ")
-        self.write("  /   O      O   \\  ")
-        self.write(" :           `    : ")
-        self.write(" |                | ")
-        self.write(" :    .------.    : ")
-        self.write("  \\  '        '  /  ")
-        self.write("   '.          .'   ")
-        self.write("     '-......-'     [/bold yellow]")
+        for line in [
+            "     .--------.     ",
+            "   .'          '.   ",
+            "  /   O      O   \\  ",
+            " :           `    : ",
+            " |                | ",
+            " :    .------.    : ",
+            "  \\  '        '  /  ",
+            "   '.          .'   ",
+            "     '-......-'     ",
+        ]:
+            self.write(f"[bold yellow]{line}[/bold yellow]")
         self.write("")
         choice = await self.get_choice("Play again?  Yes[1]  No[2]", [1, 2])
         return choice == 1
